@@ -5,11 +5,29 @@
     android:orientation="vertical" >
 
     <TextView
+        android:background="#8866ff00"
+        android:gravity="center"
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
         android:text="我是主页面"
         android:textSize="22sp" />
+    
+    <com.gao.mobilesafe.ui.FocousTextView 
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:textSize="15sp"
+        android:text="最新的手机卫士，赶快来下载，送礼物。最新的手机卫士，赶快来下载，送礼物。最新的手机卫士，赶快来下载，送礼物。最新的手机卫士，赶快来下载，送礼物。最新的手机卫士，赶快来下载，送礼物。最新的手机卫士，赶快来下载，送礼物。最新的手机卫士，赶快来下载，送礼物最新的手机卫士，赶快来下载，送礼物"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+    
+    <GridView 
+        android:id="@+id/gv_home"
+        android:verticalSpacing="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:numColumns="3"
+        />
 
 </LinearLayout>
