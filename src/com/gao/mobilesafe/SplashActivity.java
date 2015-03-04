@@ -8,16 +8,19 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +52,8 @@ public class SplashActivity extends Activity {
     private TextView mUpdateInfoTextView;
     protected String mDescription;
     protected String mApkurl;
+    
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +62,22 @@ public class SplashActivity extends Activity {
         mVersionTextView = (TextView) findViewById(R.id.version);
         mUpdateInfoTextView = (TextView) findViewById(R.id.tv_update_info);
         mVersionTextView.setText("版本号" + getVersionName());
-
-        // check update
-        checkUdate();
+        
+        mSharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+        boolean update = mSharedPreferences.getBoolean("update", false);
+        if (update) {
+            // check update
+            checkUdate();
+        } else {
+            //延迟2秒进入主界面
+            mHandler.postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+                    enterHome();
+                }
+            }, 2000);
+        }
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.2f, 1.0f);
         alphaAnimation.setDuration(500);
         findViewById(R.id.rl_splash).startAnimation(alphaAnimation);
@@ -189,6 +207,7 @@ public class SplashActivity extends Activity {
                         @Override
                         public void onLoading(long count, long current) {
                             super.onLoading(count, current);
+                            mUpdateInfoTextView.setVisibility(View.VISIBLE);
                             int progress = (int) (current * 100 / count);
                             mUpdateInfoTextView.setText("下载进度： " + progress + "%");
                         }

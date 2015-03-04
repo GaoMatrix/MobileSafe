@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.gao.mobilesafe.HomeActivity"/>
+        <activity android:name="com.gao.mobilesafe.SettingActivity"/>
     </application>
 
 </manifest>

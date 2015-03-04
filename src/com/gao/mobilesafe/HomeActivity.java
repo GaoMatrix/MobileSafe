@@ -2,9 +2,12 @@
 package com.gao.mobilesafe;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -31,6 +34,22 @@ public class HomeActivity extends Activity {
         mGridView = (GridView) findViewById(R.id.gv_home);
         mAdapter = new GrideAdapter();
         mGridView.setAdapter(mAdapter);
+        mGridView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 8:// Setting
+                        Intent intent = new Intent(HomeActivity.this, SettingActivity.class);
+                        startActivity(intent);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            
+        });
     }
 
     private class GrideAdapter extends BaseAdapter {
