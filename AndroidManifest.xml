@@ -25,6 +25,7 @@
         </activity>
         <activity android:name="com.gao.mobilesafe.HomeActivity"/>
         <activity android:name="com.gao.mobilesafe.SettingActivity"/>
+        <activity android:name="com.gao.mobilesafe.LostFindActivity"/>
     </application>
 
 </manifest>
