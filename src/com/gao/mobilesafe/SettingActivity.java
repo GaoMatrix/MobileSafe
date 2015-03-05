@@ -23,10 +23,8 @@ public class SettingActivity extends Activity{
         boolean update = mSharedPreferences.getBoolean("update", false);
         if (update) {
             mSettingItemView.setChecked(true);
-            mSettingItemView.setDesc("自动升级已经开启");
         } else {
             mSettingItemView.setChecked(false);
-            mSettingItemView.setDesc("自动升级已经关闭");
         }
         
         mSettingItemView.setOnClickListener(new OnClickListener() {
@@ -36,11 +34,9 @@ public class SettingActivity extends Activity{
                 Editor editor = mSharedPreferences.edit();
                 if (mSettingItemView.isChecked()) {
                     mSettingItemView.setChecked(false);
-                    mSettingItemView.setDesc("自动升级已经关闭");
                     editor.putBoolean("update", false);
                 } else {
                     mSettingItemView.setChecked(true);
-                    mSettingItemView.setDesc("自动升级已经开启");
                     editor.putBoolean("update", true);
                 }
                 editor.commit();
