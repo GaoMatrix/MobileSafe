@@ -21,7 +21,7 @@ public class LostFindActivity extends Activity {
             setContentView(R.layout.activity_lost_find);
         } else {
             // 还没有做过设置向导
-            Intent intent = new Intent(this, SetupActivity.class);
+            Intent intent = new Intent(this, Setup1Activity.class);
             startActivity(intent);
             // 关闭当前页面
             finish();

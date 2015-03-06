@@ -68,12 +68,18 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:src="@drawable/setup1"/>
-        <Button 
+        <!-- <Button 
+            android:onClick="next"
+            android:drawableRight="@drawable/next"
+            android:background="@drawable/button_select"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="下一步"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"/> -->
+            <!-- 上一步和下一步的按钮Button都是重复的，做成样式 -->
+            <Button 
+                style="@style/button_next_style"/>
         
     </RelativeLayout>
 </LinearLayout>
