@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 
 public class LostFindActivity extends Activity {
     private SharedPreferences mSharedPreferences;
@@ -26,6 +27,11 @@ public class LostFindActivity extends Activity {
             // 关闭当前页面
             finish();
         }
+    }
 
+    public void reEnterSetup(View view) {
+        Intent intent = new Intent(this, Setup1Activity.class);
+        startActivity(intent);
+        finish();
     }
 }
