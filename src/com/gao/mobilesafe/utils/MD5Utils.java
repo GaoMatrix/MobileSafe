@@ -25,7 +25,7 @@ public class MD5Utils {
                 int number = b & 0xff;// 加盐
                 String str = Integer.toHexString(number);
                 // System.out.println(str);
-                if (str.length() == 1) {
+                if (str.length() == 1) {//只有1位前面补0
                     buffer.append("0");
                 }
                 buffer.append(str);
