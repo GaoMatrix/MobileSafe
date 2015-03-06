@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gao="http://schemas.android.com/apk/res/com.gao.mobilesafe"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -15,27 +16,20 @@
 
     <TextView
         style="@style/text_content_style"
-        android:text="您的手机防盗卫士：" />
+        android:text="通过绑定sim:" />
 
     <TextView
         style="@style/text_content_style"
-        android:drawableLeft="@android:drawable/star_big_on"
-        android:text="sim卡变更报警" />
+        android:text="下次重启手机如果发现sim变化\n就会发送报警短信" />
 
-    <TextView
-        style="@style/text_content_style"
-        android:drawableLeft="@android:drawable/star_big_on"
-        android:text="GPS追踪" />
-
-    <TextView
-        style="@style/text_content_style"
-        android:drawableLeft="@android:drawable/star_big_on"
-        android:text="远程数据销毁" />
-
-    <TextView
-        style="@style/text_content_style"
-        android:drawableLeft="@android:drawable/star_big_on"
-        android:text="远程锁屏" />
+    <com.gao.mobilesafe.ui.SettingItemView
+        android:id="@+id/siv_update"
+        gao:title="点击绑定sim卡"
+        gao:desc_on="sim卡已绑定"
+        gao:desc_off="sim卡没有绑定"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -72,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/setup1" />
+            android:src="@drawable/bind" />
         <!--
              <Button 
             android:onClick="next"
@@ -85,7 +79,7 @@
             android:layout_alignParentRight="true"/>
         -->
         <!-- 上一步和下一步的按钮Button都是重复的，做成样式 -->
-
+        <Button style="@style/button_pre_style"/>
         <Button style="@style/button_next_style" />
     </RelativeLayout>
 

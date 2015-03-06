@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gao="http://schemas.android.com/apk/res/com.gao.mobilesafe"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp"
+        android:background="#8866ff00"
+        android:gravity="center"
+        android:text="3.设置安全号码"
+        android:textSize="22sp" />
+
+    
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/bind" />
+        <!--
+             <Button 
+            android:onClick="next"
+            android:drawableRight="@drawable/next"
+            android:background="@drawable/button_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="下一步"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"/>
+        -->
+        <!-- 上一步和下一步的按钮Button都是重复的，做成样式 -->
+        <Button style="@style/button_pre_style"/>
+        <Button style="@style/button_next_style" />
+    </RelativeLayout>
+
+</LinearLayout>
