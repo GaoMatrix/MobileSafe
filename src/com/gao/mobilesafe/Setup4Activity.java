@@ -1,23 +1,21 @@
 
 package com.gao.mobilesafe;
 
-import com.gao.mobilesafe.ui.SettingItemView;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.net.NetworkInfo.State;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 
-public class Setup3Activity extends Activity {
+public class Setup4Activity extends Activity {
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setup3);
+        setContentView(R.layout.activity_setup4);
+        mSharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
     }
 
     /**
@@ -26,7 +24,11 @@ public class Setup3Activity extends Activity {
      * @param view
      */
     public void next(View view) {
-        Intent intent = new Intent(this, Setup4Activity.class);
+        Editor editor = mSharedPreferences.edit();
+        editor.putBoolean("configed", true);
+        editor.commit();
+
+        Intent intent = new Intent(this, LostFindActivity.class);
         startActivity(intent);
         finish();
     }
@@ -37,7 +39,7 @@ public class Setup3Activity extends Activity {
      * @param view
      */
     public void pre(View view) {
-        Intent intent = new Intent(this, Setup2Activity.class);
+        Intent intent = new Intent(this, Setup3Activity.class);
         startActivity(intent);
         finish();
     }

@@ -29,6 +29,7 @@
         <activity android:name="com.gao.mobilesafe.Setup1Activity"/>
         <activity android:name="com.gao.mobilesafe.Setup2Activity"/>
         <activity android:name="com.gao.mobilesafe.Setup3Activity"/>
+        <activity android:name="com.gao.mobilesafe.Setup4Activity"/>
     </application>
 
 </manifest>

@@ -11,24 +11,13 @@
         android:layout_height="55dp"
         android:background="#8866ff00"
         android:gravity="center"
-        android:text="2.手机卡绑定"
+        android:text="4.恭喜您，设置完成"
         android:textSize="22sp" />
 
-    <TextView
-        style="@style/text_content_style"
-        android:text="通过绑定sim:" />
-
-    <TextView
-        style="@style/text_content_style"
-        android:text="下次重启手机如果发现sim变化\n就会发送报警短信" />
-
-    <com.gao.mobilesafe.ui.SettingItemView
-        android:id="@+id/siv_update"
-        android:layout_width="wrap_content"
+    <CheckBox
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        gao:desc_off="sim卡没有绑定"
-        gao:desc_on="sim卡已绑定"
-        gao:title="点击绑定sim卡" />
+        android:text="您没有开启防盗保护" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -44,17 +33,17 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@android:drawable/presence_invisible" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/presence_invisible" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@android:drawable/presence_online" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/presence_invisible" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/presence_invisible" />
     </LinearLayout>
 
     <RelativeLayout
@@ -65,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/bind" />
+            android:src="@drawable/phone" />
         <!--
              <Button 
             android:onClick="next"
@@ -81,7 +70,9 @@
 
         <Button style="@style/button_pre_style" />
 
-        <Button style="@style/button_next_style" />
+        <Button
+            style="@style/button_next_style"
+            android:text="设置完成" />
     </RelativeLayout>
 
 </LinearLayout>
