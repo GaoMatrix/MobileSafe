@@ -3,6 +3,7 @@ package com.gao.mobilesafe;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -13,10 +14,13 @@ import android.widget.Toast;
 public abstract class BaseSetupActivity extends Activity {
     // 1.定义一个手势识别器
     private GestureDetector mGestureDetector;
+    
+    protected SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
         // 2.实例化手势识别器
         mGestureDetector = new GestureDetector(this, new OnGestureListener() {
 
@@ -69,7 +73,7 @@ public abstract class BaseSetupActivity extends Activity {
                     return true;
                 }
 
-                if ((e1.getRawX() - e2.getRawY()) > 200) {
+                if ((e1.getRawX() - e2.getRawX()) > 200) {
                     // Show next page
                     showNext();
                     return true;
