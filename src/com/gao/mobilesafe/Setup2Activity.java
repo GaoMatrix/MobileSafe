@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-public class Setup2Activity extends Activity {
+public class Setup2Activity extends BaseSetupActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,12 +14,8 @@ public class Setup2Activity extends Activity {
         setContentView(R.layout.activity_setup2);
     }
 
-    /**
-     * 上一页
-     * 
-     * @param view
-     */
-    public void next(View view) {
+    @Override
+    protected void showNext() {
         Intent intent = new Intent(this, Setup3Activity.class);
         startActivity(intent);
         finish();
@@ -27,15 +23,11 @@ public class Setup2Activity extends Activity {
         overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
     }
 
-    /**
-     * 下一页
-     * 
-     * @param view
-     */
-    public void pre(View view) {
+    @Override
+    protected void showPre() {
         Intent intent = new Intent(this, Setup1Activity.class);
         startActivity(intent);
         finish();
-        overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);
+        overridePendingTransition(R.anim.tran_pre_in, R.anim.tran_pre_out);        
     }
 }

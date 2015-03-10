@@ -8,7 +8,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.View;
 
-public class Setup4Activity extends Activity {
+public class Setup4Activity extends BaseSetupActivity {
     private SharedPreferences mSharedPreferences;
 
     @Override
@@ -18,12 +18,8 @@ public class Setup4Activity extends Activity {
         mSharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
     }
 
-    /**
-     * 上一页
-     * 
-     * @param view
-     */
-    public void next(View view) {
+    @Override
+    protected void showNext() {
         Editor editor = mSharedPreferences.edit();
         editor.putBoolean("configed", true);
         editor.commit();
@@ -35,12 +31,8 @@ public class Setup4Activity extends Activity {
         overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
     }
 
-    /**
-     * 下一页
-     * 
-     * @param view
-     */
-    public void pre(View view) {
+    @Override
+    protected void showPre() {
         Intent intent = new Intent(this, Setup3Activity.class);
         startActivity(intent);
         finish();

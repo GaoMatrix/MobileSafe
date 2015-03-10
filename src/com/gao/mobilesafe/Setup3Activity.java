@@ -1,18 +1,11 @@
 
 package com.gao.mobilesafe;
 
-import com.gao.mobilesafe.ui.SettingItemView;
-
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.net.NetworkInfo.State;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 
-public class Setup3Activity extends Activity {
+public class Setup3Activity extends BaseSetupActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,12 +13,8 @@ public class Setup3Activity extends Activity {
         setContentView(R.layout.activity_setup3);
     }
 
-    /**
-     * 上一页
-     * 
-     * @param view
-     */
-    public void next(View view) {
+    @Override
+    protected void showNext() {
         Intent intent = new Intent(this, Setup4Activity.class);
         startActivity(intent);
         finish();
@@ -33,12 +22,8 @@ public class Setup3Activity extends Activity {
         overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
     }
 
-    /**
-     * 下一页
-     * 
-     * @param view
-     */
-    public void pre(View view) {
+    @Override
+    protected void showPre() {
         Intent intent = new Intent(this, Setup2Activity.class);
         startActivity(intent);
         finish();
