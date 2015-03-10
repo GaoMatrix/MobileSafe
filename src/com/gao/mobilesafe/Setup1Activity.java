@@ -20,5 +20,8 @@ public class Setup1Activity extends Activity{
     public void next(View view) {
         Intent intent = new Intent(this, Setup2Activity.class);
         startActivity(intent);
+        finish();
+        // 要求在finish()或者startActivity(intent);后面执行
+        overridePendingTransition(R.anim.tran_in, R.anim.tran_out);
     }
 }
