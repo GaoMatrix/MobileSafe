@@ -34,6 +34,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -65,6 +67,8 @@ public class SplashActivity extends Activity {
         
         mSharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
         boolean update = mSharedPreferences.getBoolean("update", false);
+        //拷贝数据库
+        copyDB();
         if (update) {
             // check update
             checkUdate();
@@ -82,6 +86,35 @@ public class SplashActivity extends Activity {
         alphaAnimation.setDuration(500);
         findViewById(R.id.rl_splash).startAnimation(alphaAnimation);
 
+    }
+
+    /*
+     *  // path 把address.db这个数据库考北大data/data/<包明>/files/address.db
+     */
+    private void copyDB() {
+        // 只要你拷贝了一次，我就不要你再拷贝了
+        try {
+            File file = new File(getFilesDir(), "address.db");
+            if (file.exists() && file.length() > 0) {
+                // 正常了，就不需要拷贝了
+                Log.i(TAG, "正常了，就不需要拷贝了");
+            } else {
+                InputStream is = getAssets().open("address.db");
+
+                FileOutputStream fos = new FileOutputStream(file);
+                byte[] buffer = new byte[1024];
+                int len = 0;
+                while ((len = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                }
+                is.close();
+                fos.close();
+            }
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private Handler mHandler = new Handler() {

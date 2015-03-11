@@ -40,6 +40,8 @@
         <activity android:name="com.gao.mobilesafe.Setup3Activity"/>
         <activity android:name="com.gao.mobilesafe.Setup4Activity"/>
         <activity android:name="com.gao.mobilesafe.SelectContactActivity"/>
+        <activity android:name="com.gao.mobilesafe.AtoolsActivity"/>
+        <activity android:name="com.gao.mobilesafe.NumberAddressQueryActivity"/>
 
         <service android:name="com.gao.mobilesafe.service.GPSService"/>
 
