@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <application
         android:allowBackup="true"
@@ -32,6 +33,7 @@
         <activity android:name="com.gao.mobilesafe.Setup2Activity"/>
         <activity android:name="com.gao.mobilesafe.Setup3Activity"/>
         <activity android:name="com.gao.mobilesafe.Setup4Activity"/>
+        <activity android:name="com.gao.mobilesafe.SelectContactActivity"/>
 
         <receiver android:name="com.gao.mobilesafe.receiver.BootCompleteReceiver" >
             <intent-filter >
