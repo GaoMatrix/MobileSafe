@@ -8,6 +8,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import com.gao.mobilesafe.ui.SettingItemView;
 
@@ -45,7 +46,8 @@ public class Setup2Activity extends BaseSetupActivity {
                 } else {
                     mSettingItemView.setChecked(true);
                     // 保存sim卡的序列号
-                    String sim = mTelephonyManager.getSimSerialNumber();
+                    // String sim = mTelephonyManager.getSimSerialNumber();
+                    String sim = "1234556";
                     editor.putString("sim", sim);
 
                 }
@@ -57,6 +59,14 @@ public class Setup2Activity extends BaseSetupActivity {
 
     @Override
     protected void showNext() {
+        // 取出是否绑定sim
+        String sim = mSharedPreferences.getString("sim", null);
+        if (TextUtils.isEmpty(sim)) {
+            // 没有绑定
+            Toast.makeText(this, "sim卡没有绑定", 1).show();
+            return;
+        }
+
         Intent intent = new Intent(this, Setup3Activity.class);
         startActivity(intent);
         finish();

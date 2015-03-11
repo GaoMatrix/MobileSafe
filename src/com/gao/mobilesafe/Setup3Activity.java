@@ -2,9 +2,12 @@
 package com.gao.mobilesafe;
 
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class Setup3Activity extends BaseSetupActivity {
     private EditText et_setup3_phone;
@@ -19,6 +22,16 @@ public class Setup3Activity extends BaseSetupActivity {
 
     @Override
     protected void showNext() {
+        String phone = et_setup3_phone.getText().toString().trim();
+        if(TextUtils.isEmpty(phone)){
+            Toast.makeText(this, "安全号码还没有设置", 0).show();
+            return;
+        }
+        //应该保持一些 安全号码
+        Editor editor = mSharedPreferences.edit();
+        editor.putString("safenumber", phone);
+        editor.commit();
+
         Intent intent = new Intent(this, Setup4Activity.class);
         startActivity(intent);
         finish();
