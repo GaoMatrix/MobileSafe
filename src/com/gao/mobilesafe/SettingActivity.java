@@ -1,3 +1,4 @@
+
 package com.gao.mobilesafe;
 
 import android.app.Activity;
@@ -13,11 +14,11 @@ import com.gao.mobilesafe.service.AddressService;
 import com.gao.mobilesafe.ui.SettingItemView;
 import com.gao.mobilesafe.utils.ServiceUtils;
 
-public class SettingActivity extends Activity{
-    //设置是否开启自动更新
+public class SettingActivity extends Activity {
+    // 设置是否开启自动更新
     private SettingItemView mSettingUpdate;
     private SharedPreferences mSharedPreferences;
-    //设置是否开启显示归属地
+    // 设置是否开启显示归属地
     private SettingItemView mSettingAddress;
 
     @Override
@@ -27,16 +28,16 @@ public class SettingActivity extends Activity{
         mSharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
         mSettingUpdate = (SettingItemView) findViewById(R.id.siv_update);
         mSettingAddress = (SettingItemView) findViewById(R.id.siv_show_address);
-        
+
         boolean update = mSharedPreferences.getBoolean("update", false);
         if (update) {
             mSettingUpdate.setChecked(true);
         } else {
             mSettingUpdate.setChecked(false);
         }
-        
+
         mSettingUpdate.setOnClickListener(new OnClickListener() {
-            
+
             @Override
             public void onClick(View v) {
                 Editor editor = mSharedPreferences.edit();
@@ -53,17 +54,17 @@ public class SettingActivity extends Activity{
         boolean isServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
                 "com.gao.mobilesafe.service.AddressService");
         if (isServiceRunning) {
-            //监听来电服务是开启的
+            // 监听来电服务是开启的
             mSettingAddress.setChecked(true);
         } else {
             mSettingAddress.setChecked(false);
         }
         mSettingAddress = (SettingItemView) findViewById(R.id.siv_show_address);
         mSettingAddress.setOnClickListener(new OnClickListener() {
-            
+
             @Override
             public void onClick(View v) {
-                
+
                 Intent intent = new Intent(SettingActivity.this, AddressService.class);
                 if (mSettingAddress.isChecked()) {
                     mSettingAddress.setChecked(false);
@@ -74,32 +75,18 @@ public class SettingActivity extends Activity{
                 }
             }
         });
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean isServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
+                "com.gao.mobilesafe.service.AddressService");
+        if (isServiceRunning) {
+            // 监听来电服务是开启的
+            mSettingAddress.setChecked(true);
+        } else {
+            mSettingAddress.setChecked(false);
+        }
     }
 }
