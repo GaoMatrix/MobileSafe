@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -119,6 +120,7 @@ public class AddressService extends Service {
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
     }
 
+    long[] mHits = new long[2];
     /**
      * 自定义土司
      * 
@@ -131,6 +133,16 @@ public class AddressService extends Service {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "view 被点击了");
+                System.arraycopy(mHits, 1, mHits, 0, mHits.length-1);
+                mHits[mHits.length - 1] = SystemClock.uptimeMillis();
+                if (mHits[0] >= (SystemClock.uptimeMillis() - 500)) {
+                    params.x = wm.getDefaultDisplay().getWidth()/2 - view.getWidth()/2;
+                    wm.updateViewLayout(view, params);
+                    // 记录控件距离屏幕左上角位置
+                    Editor editor = sp.edit();
+                    editor.putInt("lastX", params.x);
+                    editor.commit();
+                }
             }
         });
         view.setOnTouchListener(new OnTouchListener() {
@@ -185,7 +197,7 @@ public class AddressService extends Service {
                 // 不会被执行，因为到这里返回ture就被拦截了，onClick事件是由一组点击事件组成的ACTION_DOWN，ACTION_UP，只有
                 // 在ACTION_UP的时候才会触发onClick事件。
                 // 当返回为false的时候，onClick会被执行。
-                return true;
+                return false;
             }
         });
         TextView textview = (TextView) view.findViewById(R.id.tv_address);
