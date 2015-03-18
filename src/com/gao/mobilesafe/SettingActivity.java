@@ -2,15 +2,18 @@
 package com.gao.mobilesafe;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.location.Address;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.gao.mobilesafe.service.AddressService;
+import com.gao.mobilesafe.ui.SettingClickView;
 import com.gao.mobilesafe.ui.SettingItemView;
 import com.gao.mobilesafe.utils.ServiceUtils;
 
@@ -20,6 +23,8 @@ public class SettingActivity extends Activity {
     private SharedPreferences mSharedPreferences;
     // 设置是否开启显示归属地
     private SettingItemView mSettingAddress;
+    // 设置归属地显示背景
+    private SettingClickView mSettingChangeBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +78,37 @@ public class SettingActivity extends Activity {
                     mSettingAddress.setChecked(true);
                     startService(intent);
                 }
+            }
+        });
+
+
+        mSettingChangeBack = (SettingClickView) findViewById(R.id.scv_changebg);
+        mSettingChangeBack.setTitle("归属地的提示框风格");
+        final String[] items = {"半透明", "活力橙", "卫士蓝", "金属灰", "苹果绿"};
+        int which = mSharedPreferences.getInt("which", 0);
+        mSettingChangeBack.setDesc(items[which]);
+        mSettingChangeBack.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                int select = mSharedPreferences.getInt("which", 0);
+                AlertDialog.Builder builder = new Builder(SettingActivity.this);
+                builder.setTitle("归属地的提示框风格");
+                builder.setSingleChoiceItems(items, select, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Editor editor = mSharedPreferences.edit();
+                        editor.putInt("which", which);
+                        editor.commit();
+                        mSettingChangeBack.setDesc(items[which]);
+
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("cancel", null);
+                builder.show();
             }
         });
     }
