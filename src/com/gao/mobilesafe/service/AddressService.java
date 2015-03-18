@@ -7,11 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -20,6 +26,7 @@ import com.gao.mobilesafe.db.dao.NumberAddressQueryUtils;
 
 public class AddressService extends Service {
 
+    private static final String TAG = AddressService.class.getSimpleName();
     /**
      * 窗体管理者
      */
@@ -34,6 +41,8 @@ public class AddressService extends Service {
     private MyListenerPhone listenerPhone;
 
     private OutCallReceiver receiver;
+    private WindowManager.LayoutParams params;
+    private SharedPreferences sp;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -117,6 +126,68 @@ public class AddressService extends Service {
      */
     public void myToast(String address) {
         view = View.inflate(this, R.layout.address_show, null);
+        view.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "view 被点击了");
+            }
+        });
+        view.setOnTouchListener(new OnTouchListener() {
+            int startX;
+            int startY;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        startX = (int) event.getRawX();
+                        startY = (int) event.getRawY();
+                        Log.d(TAG, "Start position: " + startX + "," + startY);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int newX = (int) event.getRawX();
+                        int newY = (int) event.getRawY();
+                        Log.d(TAG, "New position: " + newX + "," + newY);
+                        int dx = newX - startX;
+                        int dy = newY - startY;
+                        Log.d(TAG, "Delta position: " + dx + "," + dy);
+                        params.x += dx;
+                        params.y += dy;
+                        //考虑边界问题
+                        if (params.x < 0) {
+                            params.x = 0;
+                        }
+                        if (params.y < 0) {
+                            params.y = 0;
+                        }
+                        if (params.x > (wm.getDefaultDisplay().getWidth() - view.getWidth())) {
+                            params.x = wm.getDefaultDisplay().getWidth() - view.getWidth();
+                        }
+                        if (params.y > (wm.getDefaultDisplay().getHeight() - view.getHeight())) {
+                            params.y = wm.getDefaultDisplay().getHeight() - view.getHeight();
+                        }
+                        wm.updateViewLayout(view, params);
+                        //重新开始初始化手指的开始和结束位置
+                        startX = newX;
+                        startY = newY;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        // 记录控件距离屏幕左上角位置
+                        Editor editor = sp.edit();
+                        editor.putInt("lastX", params.x);
+                        editor.putInt("lastY", params.y);
+                        editor.commit();
+                        break;
+                    default:
+                        break;
+                }
+                //当返回为true的时候，事件处理完毕了，不要让父控件父布局响应触摸事件.这中情况下setOnClickListener的onClick事件
+                // 不会被执行，因为到这里返回ture就被拦截了，onClick事件是由一组点击事件组成的ACTION_DOWN，ACTION_UP，只有
+                // 在ACTION_UP的时候才会触发onClick事件。
+                // 当返回为false的时候，onClick会被执行。
+                return true;
+            }
+        });
         TextView textview = (TextView) view.findViewById(R.id.tv_address);
 
         // "半透明","活力橙","卫士蓝","金属灰","苹果绿"
@@ -125,20 +196,23 @@ public class AddressService extends Service {
                 R.drawable.call_locate_blue, R.drawable.call_locate_gray,
                 R.drawable.call_locate_green
         };
-        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         view.setBackgroundResource(ids[sp.getInt("which", 0)]);
         textview.setText(address);
-        // 窗体的参数就设置好了
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+        params = new WindowManager.LayoutParams();
 
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         params.width = WindowManager.LayoutParams.WRAP_CONTENT;
 
+        //与窗体左上角对齐
+        params.gravity = Gravity.TOP + Gravity.LEFT;
+        params.x = sp.getInt("lastX", 100);
+        params.y = sp.getInt("lastY", 100);
         params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         params.format = PixelFormat.TRANSLUCENT;
-        params.type = WindowManager.LayoutParams.TYPE_TOAST;
+        //android系统里面具有系统优先级的一种窗体类型,记得添加权限
+        params.type = WindowManager.LayoutParams.TYPE_PRIORITY_PHONE;
         wm.addView(view, params);
 
     }
