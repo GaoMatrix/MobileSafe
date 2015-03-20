@@ -53,6 +53,7 @@
 
         <service android:name="com.gao.mobilesafe.service.GPSService"/>
         <service android:name="com.gao.mobilesafe.service.AddressService"/>
+        <service android:name="com.gao.mobilesafe.service.CallSmsSafeService"/>
 
         <receiver android:name="com.gao.mobilesafe.receiver.BootCompleteReceiver" >
             <intent-filter >

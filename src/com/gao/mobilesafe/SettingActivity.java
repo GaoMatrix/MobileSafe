@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.gao.mobilesafe.service.AddressService;
+import com.gao.mobilesafe.service.CallSmsSafeService;
 import com.gao.mobilesafe.ui.SettingClickView;
 import com.gao.mobilesafe.ui.SettingItemView;
 import com.gao.mobilesafe.utils.ServiceUtils;
@@ -25,6 +26,9 @@ public class SettingActivity extends Activity {
     private SettingItemView mSettingAddress;
     // 设置归属地显示背景
     private SettingClickView mSettingChangeBack;
+    //黑名单拦截的设置
+    private SettingItemView mSettingCallSmsSafe;
+    private Intent mCallSmsSafeIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,7 @@ public class SettingActivity extends Activity {
                 editor.commit();
             }
         });
+
         boolean isServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
                 "com.gao.mobilesafe.service.AddressService");
         if (isServiceRunning) {
@@ -77,6 +82,25 @@ public class SettingActivity extends Activity {
                 } else {
                     mSettingAddress.setChecked(true);
                     startService(intent);
+                }
+            }
+        });
+
+        //黑名单拦截的设置
+        mSettingCallSmsSafe = (SettingItemView) findViewById(R.id.siv_callsms_safe);
+        mCallSmsSafeIntent = new Intent(this, CallSmsSafeService.class);
+        mSettingCallSmsSafe.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(SettingActivity.this, AddressService.class);
+                if (mSettingCallSmsSafe.isChecked()) {
+                    mSettingCallSmsSafe.setChecked(false);
+                    stopService(mCallSmsSafeIntent);
+                } else {
+                    mSettingCallSmsSafe.setChecked(true);
+                    startService(mCallSmsSafeIntent);
                 }
             }
         });
@@ -124,5 +148,9 @@ public class SettingActivity extends Activity {
         } else {
             mSettingAddress.setChecked(false);
         }
+
+        boolean isCallSmsServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
+                "com.gao.mobilesafe.service.CallSmsSafeService");
+        mSettingCallSmsSafe.setChecked(isCallSmsServiceRunning);
     }
 }
