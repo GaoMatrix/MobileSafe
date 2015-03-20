@@ -4,12 +4,22 @@ package com.gao.mobilesafe;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gao.mobilesafe.db.dao.BlackNumberDao;
 import com.gao.mobilesafe.db.domain.BlackNumberInfo;
@@ -18,6 +28,7 @@ public class CallSmsSafeActivity extends Activity {
     private ListView mCallSmsSafeListView;
     private List<BlackNumberInfo> mInfos;
     private BlackNumberDao mDao;
+    private CallSmsSafeAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,14 +37,15 @@ public class CallSmsSafeActivity extends Activity {
         mCallSmsSafeListView = (ListView) findViewById(R.id.lv_callsms_safe);
         mDao = new BlackNumberDao(this);
         mInfos = mDao.findAll();
-        mCallSmsSafeListView.setAdapter(new CallSmsSafeAdapter());
+        mAdapter = new CallSmsSafeAdapter();
+        mCallSmsSafeListView.setAdapter(mAdapter);
     }
     
     private class CallSmsSafeAdapter extends BaseAdapter {
 
         //有多少条目被显示，这个方法就会被调用多少次。
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View view;
             ViewHolder holder;
             // 1.减少内存中view对象的创建个数。
@@ -43,6 +55,7 @@ public class CallSmsSafeActivity extends Activity {
                 holder = new ViewHolder();
                 holder.tv_number = (TextView) view.findViewById(R.id.tv_black_number);
                 holder.tv_mode = (TextView) view.findViewById(R.id.tv_black_mode);
+                holder.iv_delete = (ImageView) view.findViewById(R.id.iv_delete);
                 // 当孩子生出来的时候找到他们的引用，存放到记事本，放到父亲的口袋。
                 view.setTag(holder);
             } else {//复用listview缓存的对象
@@ -58,6 +71,28 @@ public class CallSmsSafeActivity extends Activity {
             } else {
                 holder.tv_mode.setText("全部拦截");
             }
+            holder.iv_delete.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new Builder(CallSmsSafeActivity.this);
+                    builder.setTitle("警告");
+                    builder.setMessage("确定要删除这条记录么？");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //删除数据库的内容
+                            mDao.delete(mInfos.get(position).getNumber());
+                            //更新界面。
+                            mInfos.remove(position);
+                            //通知listview数据适配器更新
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    builder.setNegativeButton("取消", null);
+                    builder.show();
+                }
+            });
             return view;
         }
 
@@ -88,5 +123,66 @@ public class CallSmsSafeActivity extends Activity {
     static class ViewHolder {
         TextView tv_number;
         TextView tv_mode;
+        ImageView iv_delete;
+    }
+
+    private EditText et_blacknumber;
+    private CheckBox cb_phone;
+    private CheckBox cb_sms;
+    private Button bt_ok;
+    private Button bt_cancel;
+
+    public void addBlackNumber(View view){
+        AlertDialog.Builder builder = new Builder(this);
+        final AlertDialog dialog = builder.create();
+        View contentView = View.inflate(this, R.layout.dialog_add_blacknumber, null);
+        et_blacknumber = (EditText) contentView.findViewById(R.id.et_blacknumber);
+        cb_phone = (CheckBox) contentView.findViewById(R.id.cb_phone);
+        cb_sms = (CheckBox) contentView.findViewById(R.id.cb_sms);
+        bt_cancel = (Button) contentView.findViewById(R.id.cancel);
+        bt_ok = (Button) contentView.findViewById(R.id.ok);
+        dialog.setView(contentView, 0, 0, 0, 0);
+        dialog.show();
+        bt_cancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        bt_ok.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String blacknumber = et_blacknumber.getText().toString().trim();
+                if(TextUtils.isEmpty(blacknumber)){
+                    Toast.makeText(getApplicationContext(), "黑名单号码不能为空", 0).show();
+                    return;
+                }
+                String mode ;
+                if(cb_phone.isChecked()&&cb_sms.isChecked()){
+                    //全部拦截
+                    mode = "3";
+                }else if(cb_phone.isChecked()){
+                    //电话拦截
+                    mode = "1";
+                }else if(cb_sms.isChecked()){
+                    //短信拦截
+                    mode = "2";
+                }else{
+                    Toast.makeText(getApplicationContext(), "请选择拦截模式", 0).show();
+                    return;
+                }
+                //数据被加到数据库
+                mDao.add(blacknumber, mode);
+                //更新listview集合里面的内容。
+                BlackNumberInfo info = new BlackNumberInfo();
+                info.setMode(mode);
+                info.setNumber(blacknumber);
+                mInfos.add(0, info);
+                //通知listview数据适配器数据更新了。
+                mAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
+
     }
 }
