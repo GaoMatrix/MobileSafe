@@ -5,9 +5,13 @@ import java.lang.reflect.Method;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -68,24 +72,49 @@ public class CallSmsSafeService extends Service {
         registerReceiver(mReceiver, filter);
         super.onCreate();
     }
-    
+
     private class MyListener extends PhoneStateListener {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             switch (state) {
-                case TelephonyManager.CALL_STATE_RINGING://响铃状态
+                case TelephonyManager.CALL_STATE_RINGING:// 响铃状态
                     String result = mDao.findMode(incomingNumber);
-                    if("1".equals(result) || "3".equals(result) ){
+                    if ("1".equals(result) || "3".equals(result)) {
                         Log.d(TAG, "挂断电话....");
+                        //观察呼叫记录数据库的变化
+                        Uri uri = Uri.parse("content://call_log//calls");
+                        getContentResolver().registerContentObserver(uri, true,
+                                new CallLogObserver(incomingNumber, new Handler()));
+                        // 另外一个进程里面执行远程服务的方法，并不是顺序执行的，另一个进程执行。
+                        // 方法调用后，呼叫记录可能还没有生成。deleteCallLog函数在当前线程执行。
                         endCall();
+                        // 另外一个应用程序联系人的应用的私有数据库
+                        //deleteCallLog(incomingNumber);
                     }
-                    
+
                     break;
 
                 default:
                     break;
             }
             super.onCallStateChanged(state, incomingNumber);
+        }
+    }
+
+    private class CallLogObserver extends ContentObserver {
+        private String inComingNumber;
+
+        public CallLogObserver(String incomingNumber, Handler handler) {
+            super(handler);
+            this.inComingNumber = incomingNumber;
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            Log.d(TAG, "数据库内容变化了，产生呼叫记录");
+            getContentResolver().unregisterContentObserver(this);
+            deleteCallLog(inComingNumber);
+            super.onChange(selfChange);
         }
     }
 
@@ -98,15 +127,29 @@ public class CallSmsSafeService extends Service {
     }
 
     /**
-     *查看源码来写的
+     * 利用内容提供者删除呼叫记录
+     *
+     * @param incomingNumber
+     */
+    public void deleteCallLog(String incomingNumber) {
+        ContentResolver resolver = getContentResolver();
+        // 所有内容提供者的前缀是一样的: content://
+        // 呼叫记录的uri的路径
+        Uri uri = Uri.parse("content://call_log//calls");
+        resolver.delete(uri, "number=?", new String[]{incomingNumber});
+    }
+
+    /**
+     * 查看源码来写的
      */
     public void endCall() {
-        //IBinder iBinder = ServiceManager.getService(TELEPHONY_SERVICE);
-        //ServiceManager是隐藏的类，需要通过反射来得到
-        //加载ServiceManager的字节码
+        // IBinder iBinder = ServiceManager.getService(TELEPHONY_SERVICE);
+        // ServiceManager是隐藏的类，需要通过反射来得到
+        // 加载ServiceManager的字节码
         Class clazz;
         try {
-            clazz = CallSmsSafeService.class.getClassLoader().loadClass("android.os.ServiceManager");
+            clazz = CallSmsSafeService.class.getClassLoader()
+                    .loadClass("android.os.ServiceManager");
             Method method = clazz.getDeclaredMethod("getService", String.class);
             IBinder iBinder = (IBinder) method.invoke(null, TELEPHONY_SERVICE);
             ITelephony.Stub.asInterface(iBinder).endCall();
@@ -114,6 +157,6 @@ public class CallSmsSafeService extends Service {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
     }
 }
