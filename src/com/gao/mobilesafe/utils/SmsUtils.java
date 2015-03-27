@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import org.xmlpull.v1.XmlSerializer;
 
+import android.R.integer;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -25,7 +27,7 @@ public class SmsUtils {
      * @throws IllegalStateException
      * @throws IllegalArgumentException
      */
-    public static void backupSms(Context context) throws Exception {
+    public static void backupSms(Context context, ProgressDialog progressDialog) throws Exception {
         ContentResolver resolver = context.getContentResolver();
         File file = new File(Environment.getExternalStorageDirectory(), "backup.xml");
         FileOutputStream fos = new FileOutputStream(file);
@@ -40,7 +42,11 @@ public class SmsUtils {
         Cursor cursor = resolver.query(uri, new String[] {
                 "body", "address", "type", "date"
         }, null, null, null);
+        // 开始备份的时候，设置进度条的最大值
+        int max = cursor.getCount();
+        int progress = 0;
         while (cursor.moveToNext()) {// 如果cursor可以移動到下一个
+            Thread.sleep(500);
             String body = cursor.getString(0);
             String address = cursor.getString(1);
             String type = cursor.getString(2);
@@ -62,6 +68,9 @@ public class SmsUtils {
             serializer.endTag(null, "date");
 
             serializer.endTag(null, "sms");
+            //备份过程中，增加进度
+            progress++;
+            progressDialog.setProgress(progress);
         }
         cursor.close();
         serializer.endTag(null, "smss");

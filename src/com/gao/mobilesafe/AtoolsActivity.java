@@ -4,12 +4,14 @@ package com.gao.mobilesafe;
 import com.gao.mobilesafe.utils.SmsUtils;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 public class AtoolsActivity extends Activity {
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +34,35 @@ public class AtoolsActivity extends Activity {
      * @param view
      */
     public void smsBackup(View view) {
-        try {
-            SmsUtils.backupSms(this);
-            Toast.makeText(this, "备份成功", Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "备份失败", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage("正在备份");
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressDialog.show();
+        new Thread() {
+            public void run() {
+                try {
+                    SmsUtils.backupSms(AtoolsActivity.this, mProgressDialog);
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Toast.makeText(AtoolsActivity.this, "备份成功", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Toast.makeText(AtoolsActivity.this, "备份失败", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    e.printStackTrace();
+                } finally {
+                    mProgressDialog.dismiss();
+                }
+            };
+        }.start();
     }
 
     /**
