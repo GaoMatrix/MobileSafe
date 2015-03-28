@@ -2,6 +2,7 @@
 package com.gao.mobilesafe;
 
 import com.gao.mobilesafe.utils.SmsUtils;
+import com.gao.mobilesafe.utils.SmsUtils.BackUpCallBack;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -41,7 +42,19 @@ public class AtoolsActivity extends Activity {
         new Thread() {
             public void run() {
                 try {
-                    SmsUtils.backupSms(AtoolsActivity.this, mProgressDialog);
+                    SmsUtils.backupSms(AtoolsActivity.this, new BackUpCallBack() {
+                        
+                        @Override
+                        public void onSmsBackup(int progress) {
+                            mProgressDialog.setProgress(progress);
+                        }
+                        
+                        @Override
+                        public void beforeBackup(int max) {
+                            mProgressDialog.setMax(max);
+                            
+                        }
+                    });
                     runOnUiThread(new Runnable() {
 
                         @Override

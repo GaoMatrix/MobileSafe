@@ -2,13 +2,10 @@
 package com.gao.mobilesafe.utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import org.xmlpull.v1.XmlSerializer;
 
-import android.R.integer;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -16,18 +13,35 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Xml;
+import android.widget.ProgressBar;
 
 public class SmsUtils {
+    /**
+     * 备份短信的回调接口
+     * 把经常变的逻辑抽取出来，做成接口
+     */
+    public interface BackUpCallBack {
+        /**
+         * 开始备份的时候，设置进度的最大值
+         * @param max 总进度
+         */
+        public void beforeBackup(int max);
+
+        /**
+         * 备份过程中，增加进度
+         * @param progress
+         */
+        public void onSmsBackup(int progress);
+    }
 
     /**
      * 这里抛出异常，让函数的调用者知道抛出了异常，而不是在内部捕获异常。
-     * 
      * @param context
-     * @throws IOException
-     * @throws IllegalStateException
-     * @throws IllegalArgumentException
+     * @param progressDialog 这里客户需要一个进度条对话框，就添加一个进度条对话框，代码耦合，如果需要ProgressBar那就要添加
+     * ProgressBar代码高度耦合。
+     * @throws Exception
      */
-    public static void backupSms(Context context, ProgressDialog progressDialog) throws Exception {
+    public static void backupSms(Context context, BackUpCallBack callback) throws Exception {
         ContentResolver resolver = context.getContentResolver();
         File file = new File(Environment.getExternalStorageDirectory(), "backup.xml");
         FileOutputStream fos = new FileOutputStream(file);
@@ -44,6 +58,8 @@ public class SmsUtils {
         }, null, null, null);
         // 开始备份的时候，设置进度条的最大值
         int max = cursor.getCount();
+        //progressDialog.setMax(max);
+        callback.beforeBackup(max);
         int progress = 0;
         while (cursor.moveToNext()) {// 如果cursor可以移動到下一个
             Thread.sleep(500);
@@ -70,7 +86,8 @@ public class SmsUtils {
             serializer.endTag(null, "sms");
             //备份过程中，增加进度
             progress++;
-            progressDialog.setProgress(progress);
+            //progressDialog.setProgress(progress);
+            callback.onSmsBackup(progress);
         }
         cursor.close();
         serializer.endTag(null, "smss");
