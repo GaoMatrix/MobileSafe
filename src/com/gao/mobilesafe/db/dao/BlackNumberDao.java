@@ -57,6 +57,36 @@ public class BlackNumberDao {
     }
 
     /**
+     * 查询部分的黑名单号码
+     * @param offset从哪个位置开始获取数据
+     * @param maxnumber 一次最多获取多少条记录
+     * @return
+     */
+    public List<BlackNumberInfo> findPart(int offset,int maxnumber){
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<BlackNumberInfo> result = new ArrayList<BlackNumberInfo>();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        //imit ? offset ?必须写在查询语句的最后
+        Cursor cursor = db.rawQuery("select number,mode from blacknumber order by _id desc  limit ? offset ? ", 
+                    new String[]{String.valueOf(maxnumber),String.valueOf(offset)});
+        while(cursor.moveToNext()){
+            BlackNumberInfo info = new BlackNumberInfo();
+            String number = cursor.getString(0);
+            String mode = cursor.getString(1);
+            info.setMode(mode);
+            info.setNumber(number);
+            result.add(info);
+        }
+        cursor.close();
+        db.close();
+        return result;
+    }
+
+    /**
      * 查询全部黑名单号码
      *
      * @return
