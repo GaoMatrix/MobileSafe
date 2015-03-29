@@ -8,6 +8,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -93,5 +94,31 @@ public class SmsUtils {
         serializer.endTag(null, "smss");
         serializer.endDocument();
 
+    }
+    
+    /**
+     * 还原短信
+     * @param context
+     * @param flag 是否清理原来的短信
+     */
+    public static void restoreSms(Context context, boolean flag) {
+        Uri uri = Uri.parse("content://sms/");
+        if (flag) {
+            context.getContentResolver().delete(uri, null, null);
+        }
+     // 1.读取sd卡上的xml文件
+        // Xml.newPullParser();
+
+        // 2.读取max
+
+        // 3.读取每一条短信信息，body date type address
+
+        // 4.把短信插入到系统短息应用。
+        ContentValues values = new ContentValues();
+        values.put("body", "woshi duanxin de neirong");
+        values.put("date", "1395045035573");
+        values.put("type", "1");
+        values.put("address", "5558");
+        context.getContentResolver().insert(uri, values);
     }
 }

@@ -83,6 +83,7 @@ public class AtoolsActivity extends Activity {
      * @param view
      */
     public void smsRestore(View view) {
-
+        SmsUtils.restoreSms(this, true);
+        Toast.makeText(this, "还原成功", 0).show();
     }
 }
