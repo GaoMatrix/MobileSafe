@@ -55,6 +55,7 @@
         <activity android:name="com.gao.mobilesafe.AtoolsActivity"/>
         <activity android:name="com.gao.mobilesafe.NumberAddressQueryActivity"/>
         <activity android:name="com.gao.mobilesafe.CallSmsSafeActivity"/>
+        <activity android:name="com.gao.mobilesafe.AppManagerActivity"/>
 
         <service android:name="com.gao.mobilesafe.service.GPSService"/>
         <service android:name="com.gao.mobilesafe.service.AddressService"/>
