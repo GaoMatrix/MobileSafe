@@ -4,6 +4,7 @@ package com.gao.mobilesafe.db.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gao.mobilesafe.db.BlackNumberDBOpenHelper;
 import com.gao.mobilesafe.db.domain.BlackNumberInfo;
 
 import android.content.ContentValues;

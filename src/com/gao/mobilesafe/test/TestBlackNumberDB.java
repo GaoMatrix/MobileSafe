@@ -4,7 +4,7 @@ package com.gao.mobilesafe.test;
 import java.util.List;
 import java.util.Random;
 
-import com.gao.mobilesafe.db.dao.BlackNumberDBOpenHelper;
+import com.gao.mobilesafe.db.BlackNumberDBOpenHelper;
 import com.gao.mobilesafe.db.dao.BlackNumberDao;
 import com.gao.mobilesafe.db.domain.BlackNumberInfo;
 
