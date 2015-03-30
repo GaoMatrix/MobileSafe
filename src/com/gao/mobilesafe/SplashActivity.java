@@ -1,6 +1,20 @@
 
 package com.gao.mobilesafe;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import net.tsz.afinal.FinalHttp;
+import net.tsz.afinal.http.AjaxCallBack;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -9,11 +23,12 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -26,21 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gao.mobilesafe.utils.StreamTools;
-
-import net.tsz.afinal.FinalHttp;
-import net.tsz.afinal.http.AjaxCallBack;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class SplashActivity extends Activity {
     protected static final String TAG = SplashActivity.class.getSimpleName();
@@ -67,6 +67,7 @@ public class SplashActivity extends Activity {
         
         mSharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
         boolean update = mSharedPreferences.getBoolean("update", false);
+        installShortCut();
         //拷贝数据库
         copyDB();
         if (update) {
@@ -86,6 +87,33 @@ public class SplashActivity extends Activity {
         alphaAnimation.setDuration(500);
         findViewById(R.id.rl_splash).startAnimation(alphaAnimation);
 
+    }
+
+     /**
+     * 创建快捷图标
+     */
+    private void installShortCut() {
+        boolean shortcut = mSharedPreferences.getBoolean("shortcut", false);
+        if(shortcut)
+            return;
+        Editor editor = mSharedPreferences.edit();
+        //发送广播的意图， 大吼一声告诉桌面，要创建快捷图标了
+        Intent intent = new Intent();
+        intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        //快捷方式  要包含3个重要的信息 1，名称 2.图标 3.干什么事情
+        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "手机小卫士");
+        intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+        //桌面点击图标对应的意图。
+        Intent shortcutIntent = new Intent();
+        shortcutIntent.setAction("android.intent.action.MAIN");
+        shortcutIntent.addCategory("android.intent.category.LAUNCHER");
+        shortcutIntent.setClassName(getPackageName(), "com.gao.mobilesafe.SplashActivity");
+//      shortcutIntent.setAction("com.itheima.xxxx");
+//      shortcutIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        sendBroadcast(intent);
+        editor.putBoolean("shortcut", true);
+        editor.commit();
     }
 
     /*
